@@ -1,0 +1,25 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "nodejs_binary")
+load("@npm//@graphql-codegen/cli:index.bzl", "graphql_codegen")
+
+copy_to_bin(
+    name = "sources",
+    srcs = ["codegen.build.yml", 'schema.graphql'],
+)
+
+graphql_codegen(
+    name = "types",
+    outs = [
+        "types.ts",
+    ],
+    args = [
+        "--config",
+        "codegen.build.yml",
+        # "--nobazel_node_patches",
+    ],
+    chdir = "$(RULEDIR)",
+    data = [
+        ":sources",
+        "schema.graphql",
+        "@npm//@graphql-codegen/typescript",
+    ],
+)
